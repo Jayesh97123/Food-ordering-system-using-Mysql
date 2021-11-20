@@ -1,0 +1,428 @@
+
+Food:
+1.id primary key autoincrement
+2.name varchar
+3.price double
+4.avaible_Quantity int
+5.type varchar
+6.category varchar
+
+create table Food (id int primary key auto_increment, name varchar(20), price double, available_quantity int, type varchar(20), category varchar(20));
+Query OK, 0 rows affected (2.40 sec)
+
+mysql> desc food;
++--------------------+-------------+------+-----+---------+----------------+
+| Field              | Type        | Null | Key | Default | Extra          |
++--------------------+-------------+------+-----+---------+----------------+
+| id                 | int         | NO   | PRI | NULL    | auto_increment |
+| name               | varchar(20) | YES  |     | NULL    |                |
+| price              | double      | YES  |     | NULL    |                |
+| available_quantity | int         | YES  |     | NULL    |                |
+| type               | varchar(20) | YES  |     | NULL    |                |
+| category           | varchar(20) | YES  |     | NULL    |                |
++--------------------+-------------+------+-----+---------+----------------+
+6 rows in set (0.14 sec)
+
+----------------------------------------------------------------------------------------------------------------------------
+
+customer:
+
+1.cid {primary key} [type : int auto_increment] assigned for each unique customer.
+2.name [type : varchar(30)] represents name of the customer
+3.Email [type : varchar(30)] represents email of the customer
+4.Pwd [type: varchar(30)] used for saving password of the customer
+5.Phnno [type : int(11)] is used for saving phone number of customer
+6.Address [type : text] used for saving the address of the customer
+
+mysql> create table customer(cid int primary key auto_increment, name varchar(30), email varchar(30), password varchar(30), phone int(11), address text);
+Query OK, 0 rows affected, 1 warning (0.69 sec)
+
+mysql> desc customer;
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| cid      | int         | NO   | PRI | NULL    | auto_increment |
+| name     | varchar(30) | YES  |     | NULL    |                |
+| email    | varchar(30) | YES  |     | NULL    |                |
+| password | varchar(30) | YES  |     | NULL    |                |
+| phone    | int         | YES  |     | NULL    |                |
+| address  | text        | YES  |     | NULL    |                |
++----------+-------------+------+-----+---------+----------------+
+6 rows in set (0.34 sec)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+cart:
+
+1.Id {primary key} [type : int auto_increment] assigned for each cart
+2.Cid foreign key references customer id from the customer table
+3.fid foreign key references products table
+4.Qty saves all quantities related to products added in cart (default=1)
+5.total_per_price,default =0.0 
+
+mysql> create table Cart(id int primary key auto_increment, cid int, foreign key (cid) references customer(cid), fid int, foreign key(fid) references food(id), qty int default 1, total_per_price double default 0.0);
+Query OK, 0 rows affected (2.46 sec)
+
+mysql> desc cart;
++-----------------+--------+------+-----+---------+----------------+
+| Field           | Type   | Null | Key | Default | Extra          |
++-----------------+--------+------+-----+---------+----------------+
+| id              | int    | NO   | PRI | NULL    | auto_increment |
+| cid             | int    | YES  | MUL | NULL    |                |
+| fid             | int    | YES  | MUL | NULL    |                |
+| qty             | int    | YES  |     | 1       |                |
+| total_per_price | double | YES  |     | 0       |                |
++-----------------+--------+------+-----+---------+----------------+
+5 rows in set (0.09 sec)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Orders :
+
+1.oid { primary key } [type : int auto_increment] assigned for each order.
+2.fid { foreign key references products: pid } .
+3.Cid [foreign key references customer: cid]
+4.Delivery status [type : tinyint(1)] saves the delivery status whether delivered or pending
+5.totalBill default 0.0
+
+mysql>create table Orders(oid int primary key auto_increment, fid int, foreign key(fid) references food(id), cid int, foreign key(cid) references customer(cid), delivery tinyint, total_bill int default 0);
+Query OK, 0 rows affected (1.61 sec)
+
+mysql> desc orders;
++------------+-------------+------+-----+---------+----------------+
+| Field      | Type        | Null | Key | Default | Extra          |
++------------+-------------+------+-----+---------+----------------+
+| oid        | int         | NO   | PRI | NULL    | auto_increment |
+| fid        | int         | YES  | MUL | NULL    |                |
+| cid        | int         | YES  | MUL | NULL    |                |
+| delivery   | varchar(20) | YES  |     | NULL    |                |
+| total_bill | int         | YES  |     | 0       |                |
++------------+-------------+------+-----+---------+----------------+
+5 rows in set (0.04 sec)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Food Table:
+----------
+Insert data
+
+mysql> insert into food(name,price,available_quantity,type,category) values('Pav bhaji',50,20,'Veg','meal'),('Vada pav',10,30,'Veg','fast food'),('Fish Cury',150,10,'Non Veg','meal');
+Query OK, 3 rows affected (0.25 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from food;
++----+-----------+-------+--------------------+---------+-----------+
+| id | name      | price | available_quantity | type    | category  |
++----+-----------+-------+--------------------+---------+-----------+
+|  1 | Pav bhaji |    50 |                 20 | Veg     | meal      |
+|  2 | Vada pav  |    10 |                 30 | Veg     | fast food |
+|  3 | Fish Cury |   150 |                 10 | Non Veg | meal      |
++----+-----------+-------+--------------------+---------+-----------+
+3 rows in set (0.00 sec)
+
+update data:
+
+mysql> select * from food;
++----+-----------+-------+--------------------+---------+-----------+
+| id | name      | price | available_quantity | type    | category  |
++----+-----------+-------+--------------------+---------+-----------+
+|  1 | Pav bhaji |    50 |                 16 | Veg     | meal      |
+|  2 | Vada pav  |    10 |                 28 | Veg     | fast food |
+|  3 | Fish Cury |   150 |                 10 | Non Veg | meal      |
++----+-----------+-------+--------------------+---------+-----------+
+3 rows in set (0.12 sec)
+
+mysql> update food set available_quantity=20 where id=1;
+Query OK, 1 row affected (0.22 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from food;
++----+-----------+-------+--------------------+---------+-----------+
+| id | name      | price | available_quantity | type    | category  |
++----+-----------+-------+--------------------+---------+-----------+
+|  1 | Pav bhaji |    50 |                 20 | Veg     | meal      |
+|  2 | Vada pav  |    10 |                 28 | Veg     | fast food |
+|  3 | Fish Cury |   150 |                 10 | Non Veg | meal      |
++----+-----------+-------+--------------------+---------+-----------+
+3 rows in set (0.00 sec)
+
+Delete data:
+
+mysql> select * from food;
++----+-----------+-------+--------------------+---------+-----------+
+| id | name      | price | available_quantity | type    | category  |
++----+-----------+-------+--------------------+---------+-----------+
+|  1 | Pav bhaji |    50 |                 20 | Veg     | meal      |
+|  2 | Vada pav  |    10 |                 28 | Veg     | fast food |
+|  3 | Fish Cury |   150 |                 10 | Non Veg | meal      |
++----+-----------+-------+--------------------+---------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> delete from food where id=3;
+Query OK, 1 row affected (0.34 sec)
+
+mysql> select * from food;
++----+-----------+-------+--------------------+------+-----------+
+| id | name      | price | available_quantity | type | category  |
++----+-----------+-------+--------------------+------+-----------+
+|  1 | Pav bhaji |    50 |                 20 | Veg  | meal      |
+|  2 | Vada pav  |    10 |                 28 | Veg  | fast food |
++----+-----------+-------+--------------------+------+-----------+
+2 rows in set (0.01 sec)
+
+Retrive data:
+	1. on basis of food name
+	2. on basis of food type
+
+mysql> create procedure retrive_food(in name1 varchar(20),in type1 varchar(20))
+    -> begin
+    -> select * from food where name1=name or type1=type;
+    -> end;$
+Query OK, 0 rows affected (0.22 sec)
+
+mysql> call retrive_food('Pav bhaji','veg');
+    -> $
++----+-----------+-------+--------------------+------+-----------+
+| id | name      | price | available_quantity | type | category  |
++----+-----------+-------+--------------------+------+-----------+
+|  1 | Pav bhaji |    50 |                 16 | Veg  | meal      |
+|  2 | Vada pav  |    10 |                 28 | Veg  | fast food |
++----+-----------+-------+--------------------+------+-----------+
+2 rows in set (0.13 sec)
+
+Query OK, 0 rows affected (0.16 sec)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Customer Table:
+------------
+Insert data:
+
+mysql> insert into customer(cid,name,email,password,phone,address) values(101,'Jayesh','jayesh@gmail.com','ddfuhfh',325233533,'Andheri'),(102,'Monu','monu@gmail.com','gsfasvs',615153146,'Vile parle'),(103,'Bhavesh','bhavesh@gmail.com','gsrdasddsa',153645451,'Borivali');
+Query OK, 3 rows affected (0.16 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from customer;
++-----+---------+-------------------+------------+-----------+------------+
+| cid | name    | email             | password   | phone     | address    |
++-----+---------+-------------------+------------+-----------+------------+
+| 101 | Jayesh  | jayesh@gmail.com  | ddfuhfh    | 325233533 | Andheri    |
+| 102 | Monu    | monu@gmail.com    | gsfasvs    | 615153146 | Vile parle |
+| 103 | Bhavesh | bhavesh@gmail.com | gsrdasddsa | 153645451 | Borivali   |
++-----+---------+-------------------+------------+-----------+------------+
+3 rows in set (0.00 sec)
+
+update data:
+
+mysql> update customer set name='Nikhil' where cid=102;
+Query OK, 1 row affected (0.18 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from customer;
++-----+---------+-------------------+------------+-----------+------------+
+| cid | name    | email             | password   | phone     | address    |
++-----+---------+-------------------+------------+-----------+------------+
+| 101 | Jayesh  | jayesh@gmail.com  | ddfuhfh    | 325233533 | Andheri    |
+| 102 | Nikhil  | monu@gmail.com    | gsfasvs    | 615153146 | Vile parle |
+| 103 | Bhavesh | bhavesh@gmail.com | gsrdasddsa | 153645451 | Borivali   |
++-----+---------+-------------------+------------+-----------+------------+
+3 rows in set (0.00 sec)
+
+delete data:
+
+mysql> delete from customer where cid=103;
+Query OK, 1 row affected (0.15 sec)
+
+mysql> select * from customer;
++-----+--------+------------------+----------+-----------+------------+
+| cid | name   | email            | password | phone     | address    |
++-----+--------+------------------+----------+-----------+------------+
+| 101 | Jayesh | jayesh@gmail.com | ddfuhfh  | 325233533 | Andheri    |
+| 102 | Nikhil | monu@gmail.com   | gsfasvs  | 615153146 | Vile parle |
++-----+--------+------------------+----------+-----------+------------+
+2 rows in set (0.00 sec)
+
+Retrive data:
+	1. on basis of Customer name
+	2. on basis of email
+	3. on basis of 1st letter
+
+mysql> create procedure retrive_customer(in name1 varchar(20), in email1 varchar(30), in a varchar(10))
+    -> begin
+    -> select * from customer where name1=name or email1=email or address like concat(a,'%');
+    -> end;$
+Query OK, 0 rows affected (0.48 sec)
+
+mysql> call retrive_customer('Monu','jayesh@gmail.com','b');$
++-----+---------+-------------------+------------+-----------+------------+
+| cid | name    | email             | password   | phone     | address    |
++-----+---------+-------------------+------------+-----------+------------+
+| 101 | Jayesh  | jayesh@gmail.com  | ddfuhfh    | 325233533 | Andheri    |
+| 102 | Monu    | monu@gmail.com    | gsfasvs    | 615153146 | Vile parle |
+| 103 | Bhavesh | bhavesh@gmail.com | gsrdasddsa | 153645451 | Borivali   |
++-----+---------+-------------------+------------+-----------+------------+
+3 rows in set (0.11 sec)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Cart Table:
+-----------------
+1. create a trigger on cart before insert or before update to calulate per price
+
+mysql> create trigger order_price before insert on cart
+    -> for each row
+    -> begin
+    -> if (select available_quantity from food where id=new.fid) >0 then
+    -> set new.total_per_price=new.qty* (select price from food where id=new.fid);
+    -> update food set available_quantity=available_quantity-new.qty where id=new.fid;
+    -> else
+    -> set new.total_per_price='Zero';
+    -> end if;
+    -> end;$
+Query OK, 0 rows affected (0.21 sec)
+
+
+mysql> delimiter ;
+
+2. insert data:
+
+mysql> insert into cart(id,cid,fid,qty) values(501,101,2,2);
+Query OK, 1 row affected (0.31 sec)
+
+mysql> select *from cart;
++-----+------+------+------+-----------------+
+| id  | cid  | fid  | qty  | total_per_price |
++-----+------+------+------+-----------------+
+| 501 |  101 |    2 |    2 |              20 |
++-----+------+------+------+-----------------+
+1 row in set (0.00 sec)
+
+mysql> select * from food;
++----+-----------+-------+--------------------+------+-----------+
+| id | name      | price | available_quantity | type | category  |
++----+-----------+-------+--------------------+------+-----------+
+|  1 | Pav bhaji |    50 |                 20 | Veg  | meal      |
+|  2 | Vada pav  |    10 |                  0 | Veg  | fast food |
++----+-----------+-------+--------------------+------+-----------+
+2 rows in set (0.11 sec)
+
+mysql> create procedure insert_cart(cid1 int, fid1 int, qty1 int)
+    -> begin
+    -> declare exit handler for 1265
+    -> select 'Available Zero qty in food table';
+    -> insert into cart(cid,fid,qty) values(cid1,fid1,qty1);
+    -> end; $
+Query OK, 0 rows affected (0.26 sec)
+
+mysql> call insert_cart(101,2,2);$
++----------------------------------+
+| Available Zero qty in food table |
++----------------------------------+
+| Available Zero qty in food table |
++----------------------------------+
+1 row in set (0.02 sec)
+
+Query OK, 0 rows affected (0.03 sec)
+
+
+3.update quntity on basis od custId
+
+create trigger update_price before update on cart
+for each row
+begin 
+declare price_item double;
+declare quantity_item int;
+if old.fid<>new.fid then
+select price into price_item from food where fid=new.fid;
+else
+select price into price_item from food where fid=old.fid;
+end if;
+set quantity_item = old.qty;
+if old.qty<>new.qty then
+set quantity_item=new.qty;
+end if;
+set new.total_per_price=quantity_item*price_item;
+end;
+
+mysql> create trigger update_price before update on cart
+    -> for each row
+    -> begin
+    -> declare price_item double;
+    -> declare quantity_item int;
+    -> if old.fid<>new.fid then
+    -> select price into price_item from food where fid=new.fid;
+    -> else
+    -> select price into price_item from food where fid=old.fid;
+    -> end if;
+    -> set quantity_item = old.qty;
+    -> if old.qty<>new.qty then
+    -> set quantity_item=new.qty;
+    -> end if;
+    -> set new.total_per_price=quantity_item*price_item;
+    -> end;$
+Query OK, 0 rows affected (0.12 sec)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Orders Table:
+---------------------
+Find sum of totalperprice of cart table:
+
+1. create trigger to delete data before inserting product in orders table om basis of cid
+
+mysql> create trigger order_detail before insert on orders
+    -> for each row
+    -> begin
+    -> if (select count(cid) from cart where cid=new.cid)>0 then
+    -> set new.total_bill= (select sum(total_per_price) from cart where cid=new.cid);
+    -> delete from cart where cid=new.cid;
+    -> end if;
+    -> end;$
+Query OK, 0 rows affected (0.35 sec)
+
+2. insert data:oid,fid,cid
+
+mysql> insert into orders(oid,fid,cid,delivery) values(250,1,101,'deliverd');$
+Query OK, 1 row affected (0.68 sec)
+
+mysql> select * from cart;
++-----+------+------+------+-----------------+
+| id  | cid  | fid  | qty  | total_per_price |
++-----+------+------+------+-----------------+
+| 502 |  102 |    1 |    2 |             100 |
++-----+------+------+------+-----------------+
+1 row in set (0.00 sec)
+
+mysql> select * from orders;
++-----+------+------+----------+------------+
+| oid | fid  | cid  | delivery | total_bill |
++-----+------+------+----------+------------+
+| 250 |    1 |  101 | deliverd |        120 |
++-----+------+------+----------+------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.14 sec)
+
+
+3. Retrive data:
+   1. on basis of cid
+   2. on basis of date
+
+mysql> create procedure retrive_order(in cid1 int)
+    -> begin
+    -> select * , curdate() from orders where cid1=cid;
+    -> end;$
+Query OK, 0 rows affected (0.19 sec)
+
+mysql> call retrive_order(101);
+    -> $
++-----+------+------+----------+------------+------------+
+| oid | fid  | cid  | delivery | total_bill | curdate()  |
++-----+------+------+----------+------------+------------+
+| 250 |    1 |  101 | deliverd |        120 | 2021-08-14 |
++-----+------+------+----------+------------+------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+
